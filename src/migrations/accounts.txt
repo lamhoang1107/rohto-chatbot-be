@@ -16,10 +16,6 @@ CREATE TABLE IF NOT EXISTS `accounts`  (
   INDEX email(email) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
-INSERT IGNORE INTO `accounts` (`id`, `email`, `password`, `created_at`, `updated_at`, `deleted_at`, `status`, `refresh_token`, `token_expires`, `is_deleted`, `newPassword`, `oldPassword`, `role_id`) 
-VALUES ('062f8c6d-0185-4e3f-bd2a-7c42e9b75081', 'admin@mcv.com', '$2a$12$12nVCAR8wXDOYCW5u1FAXOhYvI3arBnC302dFNMCt4GSO0UIdZ/EW', '2022-09-29 10:27:55', '2023-11-10 14:14:56', NULL, 1, 'U-YWtlkv-3E_x5MAluBGy', 1699686896137, NULL, '$2a$12$3WCy0ZX6eoAiDv9JsyQyluQTdu3U4djHbMZp4ZvX9Kc.ZEQMrBjgW', '$2a$12$7uuuUx9odGm7hu5OVImtCuhEkBPep3QAdhkrIrnx5lHw07Nbl/aXK', 0);
-
-
 CREATE TABLE IF NOT EXISTS `roles` (
   id int(10) ZEROFILL NOT NULL AUTO_INCREMENT,
   name varchar(255) CHARACTER SET utf16 COLLATE utf16_general_ci NOT NULL,
@@ -62,12 +58,13 @@ CREATE TABLE IF NOT EXISTS `prompts` (
   PRIMARY KEY (id)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf16 COLLATE = utf16_general_ci  ROW_FORMAT = Dynamic;
 
-CREATE TABLE IF NOT EXISTS `keys` (
+CREATE TABLE IF NOT EXISTS `applications` (
   id int(10) ZEROFILL NOT NULL AUTO_INCREMENT,
   key_name text CHARACTER SET utf16 COLLATE utf16_general_ci NOT NULL,
   key_value text CHARACTER SET utf16 COLLATE utf16_general_ci NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  deleted_at TIMESTAMP DEFAULT NULL,
   PRIMARY KEY (id)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf16 COLLATE = utf16_general_ci  ROW_FORMAT = Dynamic;
 
@@ -101,4 +98,19 @@ CREATE TABLE IF NOT EXISTS `product_groups` (
   deleted_at TIMESTAMP DEFAULT NULL,
   PRIMARY KEY (id)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf16 COLLATE = utf16_general_ci ROW_FORMAT = Dynamic;
+
+INSERT IGNORE INTO `modules` (`id`, `name`, `module`, `icon`, `status`, `sort_order`, `is_function`, `is_deleted`, `created_at`, `updated_at`, `deleted_at`) VALUES (0000000001, 'Quản lý nội dung - Quản lý Prompts', 'prompts', '', 1, 1, 0, 0, '2023-11-10 14:57:03', '2023-11-10 15:12:34', NULL);
+INSERT IGNORE INTO `modules` (`id`, `name`, `module`, `icon`, `status`, `sort_order`, `is_function`, `is_deleted`, `created_at`, `updated_at`, `deleted_at`) VALUES (0000000002, 'Quản lý hệ thống - Quản lý tài khoản', 'accounts', '', 1, 30, 0, 0, '2023-11-10 14:59:50', '2023-11-10 15:09:21', NULL);
+INSERT IGNORE INTO `modules` (`id`, `name`, `module`, `icon`, `status`, `sort_order`, `is_function`, `is_deleted`, `created_at`, `updated_at`, `deleted_at`) VALUES (0000000003, 'Quản lý danh mục - Quản lý Category', 'categories', '', 1, 21, 1, 0, '2023-11-10 15:01:40', '2023-11-10 15:09:28', NULL);
+INSERT IGNORE INTO `modules` (`id`, `name`, `module`, `icon`, `status`, `sort_order`, `is_function`, `is_deleted`, `created_at`, `updated_at`, `deleted_at`) VALUES (0000000004, 'Quản lý danh mục - Quản lý Nhóm sản phẩm', 'product-groups', '', 1, 22, 0, 0, '2023-11-10 15:02:53', '2023-11-10 16:15:39', NULL);
+INSERT IGNORE INTO `modules` (`id`, `name`, `module`, `icon`, `status`, `sort_order`, `is_function`, `is_deleted`, `created_at`, `updated_at`, `deleted_at`) VALUES (0000000005, 'Quản lý danh mục - Quản lý Sản phẩm', 'products', '', 1, 23, 0, 0, '2023-11-10 15:03:55', '2023-11-10 15:09:39', NULL);
+INSERT IGNORE INTO `modules` (`id`, `name`, `module`, `icon`, `status`, `sort_order`, `is_function`, `is_deleted`, `created_at`, `updated_at`, `deleted_at`) VALUES (0000000006, 'Quản lý hệ thống - Quản lý App keys', 'applications', '', 1, 31, 0, 0, '2023-11-14 09:51:00', '2023-11-14 09:52:01', NULL);
+
+INSERT IGNORE INTO `roles` (`id`, `name`, `permissions`, `status`, `is_deleted`, `created_at`, `updated_at`, `deleted_at`, `level`, `db_filters`) VALUES (0000000001, 'Admin', '{\"applications\":{\"read\":true,\"write\":true,\"create\":true,\"delete\":true},\"products\":{\"read\":true,\"write\":true,\"create\":true,\"delete\":true},\"product-groups\":{\"read\":true,\"write\":true,\"create\":true,\"delete\":true},\"categories\":{\"read\":true,\"write\":true,\"create\":true,\"delete\":true},\"accounts\":{\"read\":true,\"write\":true,\"create\":true,\"delete\":true},\"prompts\":{\"read\":true,\"write\":true,\"create\":true,\"delete\":true}}', 0, 0, '2023-11-10 14:58:21', '2023-11-14 09:51:37', NULL, 0, NULL);
+INSERT IGNORE INTO `roles` (`id`, `name`, `permissions`, `status`, `is_deleted`, `created_at`, `updated_at`, `deleted_at`, `level`, `db_filters`) VALUES (0000000002, 'Level Staff', '{\"applications\":{\"read\":false,\"write\":false,\"create\":false,\"delete\":false},\"products\":{\"read\":true,\"write\":true,\"create\":true,\"delete\":false},\"product-groups\":{\"read\":true,\"write\":true,\"create\":true,\"delete\":false},\"categories\":{\"read\":true,\"write\":true,\"create\":true,\"delete\":false},\"accounts\":{\"read\":false,\"write\":false,\"create\":false,\"delete\":false},\"prompts\":{\"read\":true,\"write\":true,\"create\":true,\"delete\":false}}', 0, 0, '2023-11-10 15:16:49', '2023-11-14 09:51:29', NULL, 0, NULL);
+INSERT IGNORE INTO `roles` (`id`, `name`, `permissions`, `status`, `is_deleted`, `created_at`, `updated_at`, `deleted_at`, `level`, `db_filters`) VALUES (0000000003, 'Level Manager', '{\"applications\":{\"read\":false,\"write\":false,\"create\":false,\"delete\":false},\"products\":{\"read\":true,\"write\":true,\"create\":true,\"delete\":true},\"product-groups\":{\"read\":true,\"write\":true,\"create\":true,\"delete\":true},\"categories\":{\"read\":true,\"write\":true,\"create\":true,\"delete\":true},\"accounts\":{\"read\":false,\"write\":false,\"create\":false,\"delete\":false},\"prompts\":{\"read\":true,\"write\":true,\"create\":true,\"delete\":true}}', 0, 0, '2023-11-10 15:17:17', '2023-11-14 09:51:22', NULL, 0, NULL);
+
+INSERT IGNORE INTO `applications` (`id`, `key_name`, `key_value`, `created_at`, `updated_at`, `deleted_at`) VALUES (0000000001, 'OPENAI_KEY', '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', '2023-11-14 02:40:41', '2023-11-14 02:53:46', NULL);
+
+INSERT IGNORE INTO `accounts` (`id`, `email`, `password`, `created_at`, `updated_at`, `deleted_at`, `status`, `refresh_token`, `token_expires`, `is_deleted`, `newPassword`, `oldPassword`, `role_id`) VALUES ('062f8c6d-0185-4e3f-bd2a-7c42e9b75081', 'admin', '$2a$12$12nVCAR8wXDOYCW5u1FAXOhYvI3arBnC302dFNMCt4GSO0UIdZ/EW', '2022-09-29 10:27:55', '2023-11-14 02:59:32', NULL, 1, 'U-YWtlkv-3E_x5MAluBGy', 1700016780916, NULL, NULL, NULL, 0);
 

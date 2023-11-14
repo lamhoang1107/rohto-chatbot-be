@@ -95,6 +95,9 @@ module.exports = class extends Controller {
                 if(_data?.status !== undefined){
                     delete _data.status;
                 }
+                if(_data?.product_id == undefined){
+                    _data.product_id = null;
+                }
                 delete _data?.source_name_changed
                 delete _data?.category_id_changed
                 await this.db.get({id:req.params.id}, true).then(async (result) => {
@@ -132,9 +135,7 @@ module.exports = class extends Controller {
             const data = {
                 "prompt":prompt,
                 "completion":completion,
-                "source":source,
-                "type": "prompt",
-                "specialty":parseInt(category_id)
+                "product_id":parseInt(product_id)
             }
             post(`${process.env.AI_URL}/records/upsert`,data).then(value=>{
                 if(value?.status == "success")
