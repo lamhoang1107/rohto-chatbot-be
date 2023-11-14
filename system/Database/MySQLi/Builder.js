@@ -61,7 +61,6 @@ module.exports = class Builder {
         SET ${updateValueQuery}
         WHERE ${conditionQuery};
       `;
-      // console.log("rawUpdateQuery",rawUpdateQuery)
       await this.connection.promise().query(rawUpdateQuery, Object.values(data));
 
       return true;
@@ -98,19 +97,15 @@ module.exports = class Builder {
       let id = '';
 
       if (conditions['id'] !== undefined) {
-        // console.log("có id get")
         id = conditions['id'];
-        // console.log("id: " + id)
         const rawQuery = `SELECT * FROM ${this.tb} WHERE id=?;`;
         let [[data = null]] = await this.connection.promise().query(rawQuery, [id]);
-        // console.log('data get từ id ra',data)
         return data;
       }
       else {
         const { data = [] } = await this.find({
           conditions: { query: { ...conditions, limit: 1 } },
         });
-        // console.log('data get từ find ra',data)
         return data.length ? data[0] : null;
       }
       
