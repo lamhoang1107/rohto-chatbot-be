@@ -31,7 +31,10 @@ module.exports = class extends Controller {
             if (_check == false) {
                 let _data = {};
                 _data = req.body;
-                // await this.insertPromt(_data.prompt,_data.completion,_data.source_name,_data.category_id).then(results => {
+                if(_data?.product_id == undefined){
+                    _data.product_id = null;
+                }
+                // await this.insertPromt(_data.prompt,_data.completion,_data.product_id).then(results => {
                     // _data.vector_id = results
                     _data.vector_id = uuidV4()
                     this.db.insert(_data);
@@ -130,12 +133,14 @@ module.exports = class extends Controller {
         }
     }
 
-    async insertPromt(prompt,completion,source,category_id){
+    async insertPromt(prompt,completion,product_id){
         return new Promise((resolve,reject)=>{
             const data = {
                 "prompt":prompt,
                 "completion":completion,
-                "product_id":parseInt(product_id)
+            }
+            if (product_id !== null) {
+                data.product_id = parseInt(product_id)
             }
             post(`${process.env.AI_URL}/records/upsert`,data).then(value=>{
                 if(value?.status == "success")
@@ -145,14 +150,15 @@ module.exports = class extends Controller {
         })
     }
 
-    async updatePromt(vector_id,prompt,completion,source,category_id){
+    async updatePromt(vector_id,prompt,completion,product_id){
         return new Promise((resolve,reject)=>{
             const data = {
                 "id":vector_id,
                 "prompt":prompt,
                 "completion":completion,
-                "source":source,
-                "specialty":parseInt(category_id)
+            }
+            if (product_id !== null) {
+                data.product_id = parseInt(product_id)
             }
             post(`${process.env.AI_URL}/records/upsert`,data).then(value=>{
                 if(value?.status == "success")
@@ -174,56 +180,6 @@ module.exports = class extends Controller {
                     resolve(true)
                 else reject('Lỗi delete vector')
             }).catch(e=>console.log(e?.message))
-        })
-    }
-
-
-    async detectAndUploadImages(htmlContent) {
-        const imgTagRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/g;
-        const imgTags = htmlContent.match(imgTagRegex);
-      
-        if (imgTags) {
-          for (const imgTag of imgTags) {
-            const srcMatch = /src=["']([^"']+)["']/g.exec(imgTag);
-            if (srcMatch) {
-              const src = srcMatch[1];
-              let imageBuffer = src
-                if (!src.startsWith(process.env.AWS_CDN_CMC)){
-                    if (src.startsWith('http') || src.startsWith('https')) {
-                        try {
-                            const response = await axios.get(src, {
-                                responseType: 'arraybuffer'
-                              });
-                            const fileExtension = src.split('.').pop();
-                            imageBuffer = `data:image/${fileExtension};base64,${Buffer.from(response.data, 'binary').toString('base64')}`;
-                        } catch (error) {
-                            console.log(error);
-                        }
-                    } 
-                    try {
-                        const response = await this.uploadImage(imageBuffer, this.tb);
-                        if (response !== false) {
-                            // Replace the src attribute with the link from the API
-                            const newImgTag = imgTag.replace(src, process.env.AWS_CDN_CMC + response);
-                            htmlContent = htmlContent.replace(imgTag, newImgTag);
-                        }
-                    } catch (error) {
-                        console.log(error);
-                    }
-                }
-            }
-          }
-        }
-        // After processing all image tags, the htmlContent string will contain the updated HTML.
-        return htmlContent;
-    }
-      
-    async uploadImage(image='',image_type=''){
-        return new Promise((resolve)=>{
-            post(`${process.env.BASE_URL}/v1/images`,{image: {file:image},image_type:image_type},'Token')
-            .then(value=>{
-                resolve(value.image_link)
-            }).catch(e=>resolve(false))
         })
     }
 

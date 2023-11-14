@@ -38,7 +38,6 @@ module.exports = class extends Controller {
 
   async checkAccount(email, req) {
     return new Promise((resolve, reject) => {
-      console.log('Checking',formatEmail(email))
       const _conditions = {};
       email = req.body.email;
       _conditions.fq = `email:${formatEmail(req.body.email)}`;

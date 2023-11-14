@@ -1,7 +1,9 @@
 "use strict";
 
 /* Package System */
-const { check } = require('express-validator');
+const { check, param } = require('express-validator');
+const Controller = require('./Controller');
+const Function = new Controller('product-groups');
 module.exports = (method) => {
 	let _validation = [];
 
@@ -20,7 +22,7 @@ module.exports = (method) => {
 			
 		case 'delete':
 			_validation = [
-				check('id', 'Trường Id là bắt buộc').not().isEmpty()
+				param('id', 'Trường Id là bắt buộc').not().isEmpty().custom(async(value,{req})=>await Function.getIsUsed(value,req.params)),
 			]
 			break;
 	}

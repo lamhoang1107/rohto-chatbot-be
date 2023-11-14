@@ -3,20 +3,19 @@
 require('module-alias/register');
 const Controller = require('@system/Controller');
 const Model = require('../../../system/Model');
+const {get} = require('@utils/Helper')
 
 module.exports = class extends Controller {
     constructor(tableName) {
         super(tableName);
     }
 
-    async checkExists(req) {
+    async getIsUsed(req) {
         return new Promise((resolve, reject) => {
-            this.db.get({id:req}, true).then(result => {
-                if (result == null) {
-                    reject({ message: 'id không tồn tại' });
-                } else {
-                    resolve(true);
-                }
+            get(`${process.env.BASE_URL}/v1/prompts?fq=products.id:${req}`,{},'Token').then(value=>{
+                if(value?.data.length > 0)
+                    reject(`Sản phẩm đang được sử dụng trong Prompt`)
+                else resolve (true)
             }).catch(e => {
                 console.log(e);
                 reject('Server Error, Please try again later');
