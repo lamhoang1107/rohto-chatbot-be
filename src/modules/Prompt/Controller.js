@@ -34,12 +34,11 @@ module.exports = class extends Controller {
                 if(_data?.product_id == undefined){
                     _data.product_id = null;
                 }
-                // await this.insertPromt(_data.prompt,_data.completion,_data.product_id).then(results => {
-                    // _data.vector_id = results
-                    _data.vector_id = uuidV4()
+                await this.insertPromt(_data.prompt,_data.completion,_data.product_id).then(results => {
+                    _data.vector_id = results
                     this.db.insert(_data);
                     this.response(res, 201);    
-                // })
+                })
                 
             }
         } catch (e) {
@@ -104,10 +103,10 @@ module.exports = class extends Controller {
                 delete _data?.source_name_changed
                 delete _data?.category_id_changed
                 await this.db.get({id:req.params.id}, true).then(async (result) => {
-                    // await this.updatePromt(result.vector_id,_data.prompt,_data.completion,_data.source_name,_data.category_id).then(results => {
+                    await this.updatePromt(result.vector_id,_data.prompt,_data.completion,_data.product_id).then(results => {
                         this.db.update({id:req.params.id},_data);
                         this.response(res, 200);  
-                    // }) 
+                    }) 
                 })
  
             }
@@ -144,7 +143,7 @@ module.exports = class extends Controller {
             }
             post(`${process.env.AI_URL}/records/upsert`,data).then(value=>{
                 if(value?.status == "success")
-                    resolve(value.data.id)
+                    resolve(value.data.ids[0].id)
                 else reject('Lỗi index vector')
             }).catch(e=>console.log(e?.message))
         })
@@ -162,7 +161,7 @@ module.exports = class extends Controller {
             }
             post(`${process.env.AI_URL}/records/upsert`,data).then(value=>{
                 if(value?.status == "success")
-                    resolve(value.data.id)
+                    resolve(true)
                 else reject('Lỗi update vector')
             }).catch(e=>console.log(e?.message))
         })
