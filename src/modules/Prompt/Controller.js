@@ -22,6 +22,18 @@ module.exports = class extends Controller {
         })
     }
 
+    async getProductName(req) {
+        return new Promise((resolve, reject) => {
+            get(`${process.env.BASE_URL}/v1/products/${req}`,{},'Token').then(value=>{
+                if(value?.data)
+                    resolve(value.data.name)
+            }).catch(e => {
+                console.log(e);
+                reject('Server Error, Please try again later');
+            });
+        })
+    }
+
 
     async create(req, res) {
         try {
@@ -133,13 +145,14 @@ module.exports = class extends Controller {
     }
 
     async insertPromt(prompt,completion,product_id){
-        return new Promise((resolve,reject)=>{
+        return new Promise(async (resolve,reject)=>{
             const data = {
                 "prompt":prompt,
                 "completion":completion,
             }
             if (product_id !== null) {
                 data.product_id = parseInt(product_id)
+                data.product = await this.getProductName(product_id)
             }
             post(`${process.env.AI_URL}/records/upsert`,data).then(value=>{
                 if(value?.status == "success")
@@ -150,7 +163,7 @@ module.exports = class extends Controller {
     }
 
     async updatePromt(vector_id,prompt,completion,product_id){
-        return new Promise((resolve,reject)=>{
+        return new Promise(async (resolve,reject)=>{
             const data = {
                 "id":vector_id,
                 "prompt":prompt,
@@ -158,6 +171,7 @@ module.exports = class extends Controller {
             }
             if (product_id !== null) {
                 data.product_id = parseInt(product_id)
+                data.product = await this.getProductName(product_id)
             }
             post(`${process.env.AI_URL}/records/upsert`,data).then(value=>{
                 if(value?.status == "success")
