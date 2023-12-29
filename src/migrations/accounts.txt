@@ -115,3 +115,16 @@ INSERT IGNORE INTO `applications` (`id`, `key_name`, `key_value`, `created_at`, 
 
 INSERT IGNORE INTO `accounts` (`id`, `email`, `password`, `created_at`, `updated_at`, `deleted_at`, `status`, `refresh_token`, `token_expires`, `is_deleted`, `newPassword`, `oldPassword`, `role_id`) VALUES ('062f8c6d-0185-4e3f-bd2a-7c42e9b75081', 'admin', '$2a$12$12nVCAR8wXDOYCW5u1FAXOhYvI3arBnC302dFNMCt4GSO0UIdZ/EW', '2022-09-29 10:27:55', '2023-11-14 02:59:32', NULL, 1, 'U-YWtlkv-3E_x5MAluBGy', 1700016780916, NULL, NULL, NULL, 0);
 
+
+
+CREATE TABLE IF NOT EXISTS histories (
+  id int(10) ZEROFILL NOT NULL AUTO_INCREMENT,
+  dialog_id varchar(255) CHARACTER SET utf16 COLLATE utf16_general_ci NULL DEFAULT NULL,
+  user_message text CHARACTER SET utf16 COLLATE utf16_general_ci,
+  assistant_message text CHARACTER SET utf16 COLLATE utf16_general_ci,
+  status tinyint NOT NULL DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  deleted_at TIMESTAMP DEFAULT NULL,
+  PRIMARY KEY (id)
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf16 COLLATE = utf16_general_ci  ROW_FORMAT = Dynamic;
