@@ -128,3 +128,9 @@ CREATE TABLE IF NOT EXISTS histories (
   deleted_at TIMESTAMP DEFAULT NULL,
   PRIMARY KEY (id)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf16 COLLATE = utf16_general_ci  ROW_FORMAT = Dynamic;
+
+
+ALTER TABLE `prompts` ADD price text DEFAULT NULL;
+ALTER TABLE `prompts` ADD unit text DEFAULT NULL;
+ALTER TABLE `prompts` ADD use_case text DEFAULT NULL;
+ALTER TABLE `prompts` ADD use_guide text DEFAULT NULL;
