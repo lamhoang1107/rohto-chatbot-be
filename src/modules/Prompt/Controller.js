@@ -46,7 +46,7 @@ module.exports = class extends Controller {
                 if(_data?.product_id == undefined){
                     _data.product_id = null;
                 }
-                await this.insertPromt(_data.prompt,_data.completion,_data.product_id).then(results => {
+                await this.insertPromt(_data.prompt,_data.completion,_data.product_id,_data.price,_data.unit,_data.use_case,_data.use_guide).then(results => {
                     _data.vector_id = results
                     this.db.insert(_data);
                     this.response(res, 201);    
@@ -112,10 +112,22 @@ module.exports = class extends Controller {
                 if(_data?.product_id == undefined){
                     _data.product_id = null;
                 }
+                if(_data?.price == undefined){
+                    _data.price = null;
+                }
+                if(_data?.unit == undefined){
+                    _data.unit = null;
+                }
+                if(_data?.use_case == undefined){
+                    _data.use_case = null;
+                }
+                if(_data?.use_guide == undefined){
+                    _data.use_guide = null;
+                }
                 delete _data?.source_name_changed
                 delete _data?.category_id_changed
                 await this.db.get({id:req.params.id}, true).then(async (result) => {
-                    await this.updatePromt(result.vector_id,_data.prompt,_data.completion,_data.product_id).then(results => {
+                    await this.updatePromt(result.vector_id,_data.prompt,_data.completion,_data.product_id,_data.price,_data.unit,_data.use_case,_data.use_guide).then(results => {
                         this.db.update({id:req.params.id},_data);
                         this.response(res, 200);  
                     }) 
@@ -144,7 +156,7 @@ module.exports = class extends Controller {
         }
     }
 
-    async insertPromt(prompt,completion,product_id){
+    async insertPromt(prompt,completion,product_id,price,unit,use_case,use_guide){
         return new Promise(async (resolve,reject)=>{
             const data = {
                 "prompt":prompt,
@@ -153,6 +165,18 @@ module.exports = class extends Controller {
             if (product_id !== null) {
                 data.product_id = parseInt(product_id)
                 data.product = await this.getProductName(product_id)
+            }
+            if (price !== null) {
+                data.price = price
+            }
+            if (unit !== null) {
+                data.unit = unit
+            }
+            if (use_case !== null) {
+                data.use_case = use_case
+            }
+            if (use_guide !== null) {
+                data.use_guide = use_guide
             }
             post(`${process.env.AI_URL}/records/upsert`,data).then(value=>{
                 if(value?.status == "success")
@@ -162,7 +186,7 @@ module.exports = class extends Controller {
         })
     }
 
-    async updatePromt(vector_id,prompt,completion,product_id){
+    async updatePromt(vector_id,prompt,completion,product_id,price,unit,use_case,use_guide){
         return new Promise(async (resolve,reject)=>{
             const data = {
                 "id":vector_id,
@@ -172,6 +196,18 @@ module.exports = class extends Controller {
             if (product_id !== null) {
                 data.product_id = parseInt(product_id)
                 data.product = await this.getProductName(product_id)
+            }
+            if (price !== null) {
+                data.price = price
+            }
+            if (unit !== null) {
+                data.unit = unit
+            }
+            if (use_case !== null) {
+                data.use_case = use_case
+            }
+            if (use_guide !== null) {
+                data.use_guide = use_guide
             }
             post(`${process.env.AI_URL}/records/upsert`,data).then(value=>{
                 if(value?.status == "success")
