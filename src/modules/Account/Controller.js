@@ -318,7 +318,7 @@ module.exports = class extends Controller {
       if(role_id != ''){
           const result = await axios.get(`${process.env.BASE_URL}/v1/roles/${role_id}`, { headers: { Authorization: `Token ${genToken()}` } }).then((resp) => resp?.data?.data ?? '{}' ).catch((e) => {});
           if (result) {
-              let _module = req?.headers['x-aio-module']??'';
+              let _module = req.route.path.substring(1)??'';
               let _permission = JSON.parse(result?.permissions);
               if(_module){
                   switch(req.method){
@@ -361,7 +361,7 @@ module.exports = class extends Controller {
       if(role_id != ''){
           const result = await axios.get(`${process.env.BASE_URL}/v1/roles/${role_id}`, { headers: { Authorization: `Token ${genToken()}` } }).then((resp) => resp?.data?.data ?? '{}' ).catch((e) => {});
           if (result) {
-              let _module = req?.headers['x-aio-module']??'';
+              let _module = req.route.path.substring(1)??'';
               let _dbFilters = JSON.parse(result?.db_filters);
               if(typeof(_dbFilters[_module])!=='undefined'){
                 _r = _dbFilters[_module];
